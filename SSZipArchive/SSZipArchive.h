@@ -36,15 +36,15 @@
 	  completionHandler:(void (^)(NSString *path, BOOL succeeded, NSError *error))completionHandler;
 
 // Zip
-+ (BOOL)createZipFileAtPath:(NSString *)path withFilesAtPaths:(NSArray *)filenames;
-+ (BOOL)createZipFileAtPath:(NSString *)path withContentsOfDirectory:(NSString *)directoryPath;
-+ (BOOL)createZipFileAtPath:(NSString *)path withContentsOfDirectory:(NSString *)directoryPath keepParentDirectory:(BOOL)keepParentDirectory;
++ (BOOL)createZipFileAtPath:(NSString *)path withFilesAtPaths:(NSArray *)filenames encoding:(NSStringEncoding)filenameEncoding;
++ (BOOL)createZipFileAtPath:(NSString *)path withContentsOfDirectory:(NSString *)directoryPath encoding:(NSStringEncoding)filenameEncoding;
++ (BOOL)createZipFileAtPath:(NSString *)path withContentsOfDirectory:(NSString *)directoryPath keepParentDirectory:(BOOL)keepParentDirectory encoding:(NSStringEncoding)filenameEncoding;
 
 - (instancetype)initWithPath:(NSString *)path;
 @property (NS_NONATOMIC_IOSONLY, readonly) BOOL open;
 - (BOOL)writeFile:(NSString *)path;
-- (BOOL)writeFileAtPath:(NSString *)path withFileName:(NSString *)fileName;
-- (BOOL)writeData:(NSData *)data filename:(NSString *)filename;
+- (BOOL)writeFileAtPath:(NSString *)path withFileName:(NSString *)fileName encoding:(NSStringEncoding)filenameEncoding;
+- (BOOL)writeData:(NSData *)data filename:(NSString *)filename encoding:(NSStringEncoding)filenameEncoding;
 @property (NS_NONATOMIC_IOSONLY, readonly) BOOL close;
 
 @end

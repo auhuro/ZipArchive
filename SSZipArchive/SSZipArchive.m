@@ -374,7 +374,7 @@
 
 #pragma mark - Zipping
 
-+ (BOOL)createZipFileAtPath:(NSString *)path withFilesAtPaths:(NSArray *)paths
++ (BOOL)createZipFileAtPath:(NSString *)path withFilesAtPaths:(NSArray *)paths encoding:(NSStringEncoding)filenameEncoding
 {
 	BOOL success = NO;
 	SSZipArchive *zipArchive = [[SSZipArchive alloc] initWithPath:path];
@@ -392,12 +392,12 @@
 	return success;
 }
 
-+ (BOOL)createZipFileAtPath:(NSString *)path withContentsOfDirectory:(NSString *)directoryPath {
-    return [self createZipFileAtPath:path withContentsOfDirectory:directoryPath keepParentDirectory:NO];
++ (BOOL)createZipFileAtPath:(NSString *)path withContentsOfDirectory:(NSString *)directoryPath encoding:(NSStringEncoding)filenameEncoding {
+    return [self createZipFileAtPath:path withContentsOfDirectory:directoryPath keepParentDirectory:NO encoding:filenameEncoding];
 }
 
 
-+ (BOOL)createZipFileAtPath:(NSString *)path withContentsOfDirectory:(NSString *)directoryPath keepParentDirectory:(BOOL)keepParentDirectory {
++ (BOOL)createZipFileAtPath:(NSString *)path withContentsOfDirectory:(NSString *)directoryPath keepParentDirectory:(BOOL)keepParentDirectory encoding:(NSStringEncoding)filenameEncoding {
     BOOL success = NO;
     
     NSFileManager *fileManager = nil;
@@ -417,7 +417,7 @@
                 {
                     fileName = [[directoryPath lastPathComponent] stringByAppendingPathComponent:fileName];
                 }
-                [zipArchive writeFileAtPath:fullFilePath withFileName:fileName];
+                [zipArchive writeFileAtPath:fullFilePath withFileName:fileName encoding:filenameEncoding];
             }
             else
             {
@@ -425,7 +425,7 @@
                 {
                     NSString *tempName = [fullFilePath stringByAppendingPathComponent:@".DS_Store"];
                     [@"" writeToFile:tempName atomically:YES encoding:NSUTF8StringEncoding error:nil];
-                    [zipArchive writeFileAtPath:tempName withFileName:[fileName stringByAppendingPathComponent:@".DS_Store"]];
+                    [zipArchive writeFileAtPath:tempName withFileName:[fileName stringByAppendingPathComponent:@".DS_Store"] encoding:filenameEncoding];
                     [[NSFileManager defaultManager] removeItemAtPath:tempName error:nil];
                 }
             }
@@ -527,13 +527,13 @@
 
 - (BOOL)writeFile:(NSString *)path
 {
-    return [self writeFileAtPath:path withFileName:nil];
+    return [self writeFileAtPath:path withFileName:nil encoding:NSUTF8StringEncoding];
 }
 
 // supports writing files with logical folder/directory structure
 // *path* is the absolute path of the file that will be compressed
 // *fileName* is the relative name of the file how it is stored within the zip e.g. /folder/subfolder/text1.txt
-- (BOOL)writeFileAtPath:(NSString *)path withFileName:(NSString *)fileName
+- (BOOL)writeFileAtPath:(NSString *)path withFileName:(NSString *)fileName encoding:(NSStringEncoding)filenameEncoding
 {
     NSAssert((_zip != NULL), @"Attempting to write to an archive which was never opened");
 
@@ -544,10 +544,10 @@
 
     const char *afileName;
     if (!fileName) {
-        afileName = [path.lastPathComponent UTF8String];
+        afileName = [path.lastPathComponent cStringUsingEncoding:filenameEncoding];
     }
     else {
-        afileName = [fileName UTF8String];
+        afileName = [fileName cStringUsingEncoding:filenameEncoding];
     }
 
     zip_fileinfo zipInfo = {{0}};
