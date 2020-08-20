@@ -545,9 +545,15 @@
     const char *afileName;
     if (!fileName) {
         afileName = [path.lastPathComponent cStringUsingEncoding:filenameEncoding];
+        if (afileName == NULL) {
+            afileName = [path.lastPathComponent UTF8String];
+        }
     }
     else {
         afileName = [fileName cStringUsingEncoding:filenameEncoding];
+        if (afileName == NULL) {
+            afileName = [fileName UTF8String];
+        }
     }
 
     zip_fileinfo zipInfo = {{0}};
